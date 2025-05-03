@@ -1,4 +1,6 @@
 *.env
 .env
+*.pyc
 channelblacklist.txt
 channeloptlist.txt
+/.idea

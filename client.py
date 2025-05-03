@@ -3,7 +3,9 @@ import discord
 import os
 import re
 from dotenv import load_dotenv
+from Utilities.filereader import FileReader as filereader
 load_dotenv()
+
 token = str(os.getenv("TOKEN"))
 build_type = str(os.getenv("BUILD_TYPE"))
 bot_version = str(os.getenv("BOT_VERSION"))
@@ -13,35 +15,18 @@ intents = discord.Intents.default()
 intents.message_content = True
 bot = discord.Bot(command_prefix ="&" , intents=intents)
 
-def read_numbers_from_file(filepath):
-    numbers_L = []
-    with open(filepath, "r") as file:
-        for line in file:
-            # Remove leading/trailing whitespace and split the line into numbers
-            nums = line.strip().split()
-            for num in nums:
-              try:
-                numbers_L.append(int(num)) # Try converting to integer
-              except ValueError:
-                try:
-                  numbers_L.append(float(num)) # If not integer, try float
-                except ValueError:
-                  print(f"Invalid input: {num} on line: {line.strip()}")
-
-    return numbers_L
-
-
 @bot.event
 async def on_ready():
     print(f"{bot.user} is online in {build_type} with version {bot_version}!")
 
 @bot.event
 async def on_message(message):
-    channel_select = read_numbers_from_file(bl_path)
+    file_reader_obj = filereader(bl_path)
+    channel_select = file_reader_obj.read_numbers_from_file(bl_path)
     for item in channel_select:
         channel_id_to_ignore = item  # ignores messages with links in THIS channel.
         if message.channel.id == channel_id_to_ignore:
-            if re.search(r'https?://\S+|www\.\S+', message.content):
+            if re.search(r'https?://\S+|www\.|․\S+', message.content):
                 try:
                     await message.delete()
                     print(f"Deleted message with link from {message.author}")
@@ -52,11 +37,25 @@ async def on_message(message):
                 except Exception as e:
                     print(f"An error occurred: {e}")
 
-    channel_select = read_numbers_from_file(wl_path)
+    if message.stickers: #for also removing stickers because guild API is bs
+        for sticker in message.stickers:
+            sticker_name = sticker.name
+            if re.search(r'https?://\S+|/', sticker_name):
+                    try:
+                        await message.delete()
+                        print(f"Deleted sticker with link from {message.author}")
+                    except discord.NotFound:
+                        print("Message not found, it may have already been deleted.")
+                    except discord.Forbidden:
+                        print("Missing permissions to delete the message.")
+                    except Exception as e:
+                        print(f"An error occurred: {e}")
+
+    channel_select = file_reader_obj.read_numbers_from_file(wl_path)
     for item in channel_select:
         channel_id_to_ignore = item  # ignores messages with links in THIS channel.
         if message.channel.id == channel_id_to_ignore:
-            if re.search(r'https?://(?:www\.)?(?:twitter|x)\.com/\S*', message.content):
+            if re.search(r'https?://(?:www\.)?(?:twitter|x|vxtwitter|fixupx|stupidpenisx|girlcockx)\.com/\S*', message.content):
                 try:
                     await message.delete()
                     print(f"Deleted a twitter message with link from {message.author}")
