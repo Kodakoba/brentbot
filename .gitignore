@@ -1,0 +1,4 @@
+*.env
+.env
+channelblacklist.txt
+channeloptlist.txt
