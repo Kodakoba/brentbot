@@ -1,4 +1,14 @@
 version: "3.9"
 services:
+  db:
+    image: mysql
+    restart: always
+    environment:
+      MYSQL_ALLOW_EMPTY_PASSWORD: 1
+
   bot:
+    env_file: ".env"
     build: .
+    volumes:
+      - ./channelblacklist.txt:/channelblacklist.txt
+      - ./channeloptlist.txt:/channeloptlist.txt
