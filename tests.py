@@ -70,6 +70,6 @@ class TestSystem(unittest.TestCase):
         registry_expression = Regex()
         bob = registry_expression.text_to_regex("hi", False, True)
         result2 = new_greeting.greet_based_on_input(bob)
-        self.assertEqual(result2, "Good Evening (?i)hi")
+        self.assertEqual(result, "Good Evening (?i)hi")
 
 
