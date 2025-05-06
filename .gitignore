@@ -4,3 +4,4 @@
 channelblacklist.txt
 channeloptlist.txt
 /.idea
+.coverage
